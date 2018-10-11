@@ -1,0 +1,6 @@
+[package]
+name = "JavaDocGenerator"
+version = "0.1.0"
+authors = ["Quentin <Q.C.L.Lee@student.tudelft.nl>"]
+
+[dependencies]
