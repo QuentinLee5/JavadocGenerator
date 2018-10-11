@@ -11,25 +11,25 @@ fn generate_javadoc(path: &str) {
     
     let lines = output.lines();
     
-    let mut res = Vec::new();
+    let mut res: Vec<String> = Vec::new();
     for (index, line) in lines.enumerate() {
         if line.contains("get") {
-            res.push("    /**");
-            res.push("     * getter for this field");
-            res.push("     * @return ");
-            res.push("     */");
+            res.push(String::from("    /**"));
+            res.push(String::from("     * getter for this field"));
+            res.push(String::from("     * @return "));
+            res.push(String::from("     */"));
         }
         if line.contains("set") {
-            let field_name = getParamName(line).to_string();
-            let description = format!("The setter for the {} field of this class", field_name).to_owned();
-            let description = "The setter for the ";
-            description.push("test");
-            res.push("    /**");
-            res.push(&description);
-            res.push("     */");
+            let field_name = get_param_name(line).to_string();
+            let description = format!("     * The setter for the {} field of this class", field_name);
+            let param_description = format!("     * @param {} The new value assigned to the {} field of the object", field_name, field_name);
+            res.push(String::from("    /**"));
+            res.push(description);
+            res.push(param_description);
+            res.push(String::from("     */"));
         }
 
-        res.push(line);        
+        res.push(line.to_string());        
     }
 
     for line in res {
@@ -46,7 +46,7 @@ fn read_file(path: &str) -> String {
     return contents;
 }
 
-fn getParamName(line: &str) -> &str {
+fn get_param_name(line: &str) -> &str {
     let first_parentheses = line.find("(").unwrap() + 1;
     let second_parentheses = line.find(")").unwrap(); 
     let words = &line[first_parentheses..second_parentheses];
