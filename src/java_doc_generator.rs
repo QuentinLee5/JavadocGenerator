@@ -1,7 +1,4 @@
-use std::fs;
-
-pub fn generate_javadoc(path: &str) {
-    let output = read_file(path);
+pub fn generate_javadoc(output: &str) -> String {
     
     let lines = output.lines();
     
@@ -35,8 +32,7 @@ pub fn generate_javadoc(path: &str) {
         }
     }
 
-    
-    write_file(path, &res);
+    return res;    
 }
 
 fn get_field_name(line: &str) -> String {
@@ -59,15 +55,3 @@ fn get_param_name(line: &str) -> &str {
     splitted[1]
 
 }
-
-fn read_file(path: &str) -> String {
-    let contents = fs::read_to_string(path)
-        .expect("Something went wrong reading the file");
-
-    contents
-}
-
-fn write_file(path: &str, content: &str) {
-    fs::write(path, content).expect("Something went wrong reading the file");
-}
-
