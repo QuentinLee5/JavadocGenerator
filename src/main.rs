@@ -1,15 +1,19 @@
 use std::fs;
 use std::env;
 mod java_doc_generator;
+mod checkstyle_fixer;
 
-fn main() {  
+fn main() {
+    
     let args: Vec<String> = env::args().collect();
 
     let path = &args[1];
     let content = read_file(path);
     let result: String = java_doc_generator::generate_javadoc(&content);
-    write_file(path, result);
-
+    let result2 = checkstyle_fixer::fix_checkstyle(result);    
+    write_file(path, result2);
+    
+   
 }
 
 fn read_file(path: &str) -> String {
