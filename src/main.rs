@@ -16,8 +16,8 @@ fn generate_javadoc(path: &str) {
     for line in lines {
         if !has_javadoc && line.contains("get") && line.contains("public") {
             let field_name = get_field_name(line);
-            let description = format!("     * The getter for the {} field of this class\n", field_name);
-            let return_text = format!("     * @return returns the value of the {} field of this class\n", field_name);
+            let description = format!("     * The getter for the {} field of this class.\n", field_name);
+            let return_text = format!("     * @return returns the value of the {} field of this class.\n", field_name);
             res.push_str(&String::from("    /**\n"));
             res.push_str(&description);
             res.push_str(&return_text);
@@ -25,8 +25,8 @@ fn generate_javadoc(path: &str) {
         }
         if !has_javadoc && line.contains("set") && line.contains("public"){
             let field_name = get_param_name(line).to_string();
-            let description = format!("     * The setter for the {} field of this class\n", field_name);
-            let param_description = format!("     * @param {} The new value assigned to the {} field of the object\n", field_name, field_name);
+            let description = format!("     * The setter for the {} field of this class.\n", field_name);
+            let param_description = format!("     * @param {} The new value assigned to the {} field of the object.\n", field_name, field_name);
             res.push_str(&String::from("    /**\n"));
             res.push_str(&description);
             res.push_str(&param_description);
@@ -41,7 +41,6 @@ fn generate_javadoc(path: &str) {
         }
     }
 
-    println!("{}", res);
     
     fs::write(path, res).expect("adding javadoc to file did not succeed");
 
