@@ -1,8 +1,11 @@
 use std::fs;
+use std::env;
 
-fn main() {   
-    let path = "/Users/quentinlee/Desktop/test.java";
-    generate_javadoc(path);
+fn main() {  
+    let args: Vec<String> = env::args().collect();
+
+    let path = &args[1];
+    generate_javadoc(&path);
 
 }
 
