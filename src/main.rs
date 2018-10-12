@@ -14,9 +14,12 @@ fn generate_javadoc(path: &str) {
     let mut res: Vec<String> = Vec::new();
     for (index, line) in lines.enumerate() {
         if line.contains("get") {
+            let field_name = get_field_name(line);
+            let description = format!("     * The getter for the {} field of this class", field_name);
+            let return_text = format!("     * @return returns the value of the {} field of this class", field_name);
             res.push(String::from("    /**"));
-            res.push(String::from("     * getter for this field"));
-            res.push(String::from("     * @return "));
+            res.push(description);
+            res.push(return_text);
             res.push(String::from("     */"));
         }
         if line.contains("set") {
@@ -43,14 +46,26 @@ fn read_file(path: &str) -> String {
     let contents = fs::read_to_string(path)
         .expect("Something went wrong reading the file");
 
-    return contents;
+    contents
+}
+
+fn get_field_name(line: &str) -> String {
+    let index_1 = line.find("get").unwrap() + 3;
+    let index_2 = line.find("()").unwrap();
+    
+    let char_vec:Vec<char> = line.chars().collect();
+    let ch = char_vec[index_1];
+    let mut res: String = String::from(ch.to_lowercase().to_string());
+    res.push_str(&line[index_1 + 1..index_2]);
+    
+    res
 }
 
 fn get_param_name(line: &str) -> &str {
-    let first_parentheses = line.find("(").unwrap() + 1;
-    let second_parentheses = line.find(")").unwrap(); 
+    let first_parentheses = line.find('(').unwrap() + 1;
+    let second_parentheses = line.find(')').unwrap(); 
     let words = &line[first_parentheses..second_parentheses];
     let splitted: Vec<&str> = words.split(' ').collect();
-    return splitted[1];
+    splitted[1]
 
 }
