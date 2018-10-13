@@ -32,7 +32,7 @@ fn fix_spaces(content: String) -> String {
 }
 
 fn char_with_spaces(input: char) -> bool {
-    if input == '/' || input == '-' || input == '+' || input == '*' {
+    if input == '/' || input == '-' || input == '+' || input == '*' || input == '}' || input == '{' {
         return true;
     }
     false
@@ -43,4 +43,29 @@ fn valid_no_space(char_before: char, char_after: char) -> bool {
         return true;
     }
     false
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_char_with_space() {
+        assert_eq!(char_with_spaces('{'), true);
+    }
+
+    #[test]
+    fn test_char_with_no_space() {
+        assert_eq!(char_with_spaces('w'), false);
+    }
+
+    #[test]
+    fn test_valid_no_space_true() {
+        assert_eq!(valid_no_space('/', ' '), true);
+    }
+
+    #[test]
+    fn test_valid_no_space_false() {
+        assert_eq!(valid_no_space('w', 'x'), false);
+    }
 }
