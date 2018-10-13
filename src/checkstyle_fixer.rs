@@ -8,18 +8,27 @@ fn fix_spaces(content: String) -> String {
     let chars:Vec<char> = content.chars().collect(); 
 
     for (index, value) in chars.iter().enumerate() {
-        if *value == ',' && chars[index + 1] != ' ' {
+       let char2 = {
+            if chars.len() > index + 1 {
+                chars[index + 1]
+            }
+            else {
+                ' '
+            }
+        };
+        if *value == ',' && char2 != ' ' {
             result.push(*value);
             result.push(' ');              
         } 
-        else if char_with_spaces(*value) && !valid_no_space(chars[index - 1], chars[index + 1]) {
+        
+        else if char_with_spaces(*value) && !valid_no_space(chars[index - 1], char2) {
             if chars[index - 1] != ' ' {
                 result.push(' ');
             }
 
             result.push(*value);
             
-            if chars[index + 1] != ' ' {
+            if chars.len() > index + 1 && chars[index + 1] != ' ' {
                 result.push(' ');
             }
         }
@@ -67,5 +76,15 @@ mod tests {
     #[test]
     fn test_valid_no_space_false() {
         assert_eq!(valid_no_space('w', 'x'), false);
+    }
+
+    #[test]
+    fn test_spaces_on_string_arithmetics() {
+        assert_eq!(fix_spaces(String::from("2* 3 +4-z/ 3")), String::from("2 * 3 + 4 - z / 3"));
+    }
+
+    #[test]
+    fn test_spaces_on_string_curly_braces() {
+        assert_eq!(fix_spaces(String::from("public int test_method(){  }")), String::from("public int test_method() {  }"))
     }
 }
