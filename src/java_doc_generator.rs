@@ -1,6 +1,7 @@
-pub fn generate_javadoc(output: &str) -> String {
+/// Generates Javadoc for the given code.
+pub fn generate_javadoc(code: &str) -> String {
     
-    let lines = output.lines();
+    let lines = code.lines();
     
     let mut res = String::from("");
     let mut has_javadoc = false;
@@ -35,6 +36,7 @@ pub fn generate_javadoc(output: &str) -> String {
     return res;    
 }
 
+/// Returns the name of the field given a line code.
 fn get_field_name(line: &str) -> String {
     let index_1 = line.find("get").unwrap() + 3;
     let index_2 = line.find("()").unwrap();
@@ -47,6 +49,7 @@ fn get_field_name(line: &str) -> String {
     res
 }
 
+/// Returns the name of the field using the parameter name given a line of code.
 fn get_param_name(line: &str) -> &str {
     let first_parentheses = line.find('(').unwrap() + 1;
     let second_parentheses = line.find(')').unwrap();
