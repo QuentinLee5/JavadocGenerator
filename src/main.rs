@@ -16,7 +16,7 @@ fn main() {
         println!("Generating javadoc and fixing checkstyle errors done");
     }
     else {
-        println!("No File path has been given.");
+        println!("No File path has been given as program argument.");
     }
 
 }
