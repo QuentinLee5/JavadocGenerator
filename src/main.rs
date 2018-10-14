@@ -2,7 +2,7 @@ use std::fs;
 use std::env;
 mod java_doc_generator;
 mod checkstyle_fixer;
-//fsdfsfs
+
 fn main() {
 
     let args: Vec<String> = env::args().collect();
