@@ -1,7 +1,9 @@
+/// Fix the checkstye of all code given.
 pub fn fix_checkstyle(content: String) -> String {
     fix_spaces(content)
 }
 
+/// Fix the checkstyle errors which are caused by missing spaces.
 fn fix_spaces(content: String) -> String {
     let mut result = String::from("");
 
@@ -50,6 +52,7 @@ fn fix_spaces(content: String) -> String {
     result
 }
 
+/// Checks if the char is a char which must have a space as prefix and suffix.
 fn char_with_spaces(input: char) -> bool {
     if input == '/' || input == '-' || input == '+' || input == '*' || input == '}' || input == '{' {
         return true;
@@ -57,6 +60,7 @@ fn char_with_spaces(input: char) -> bool {
     false
 }
 
+/// Checks if the line contains a char which must have a space as prefix and suffix.
 fn line_with_no_spaces(input: &str) -> bool {
     if input.contains('/') || input.contains('-') || input.contains('+') || input.contains('*') || input.contains('}') || input.contains('{') {
         return false;
@@ -64,6 +68,7 @@ fn line_with_no_spaces(input: &str) -> bool {
     true
 }
 
+/// Checks if the missing space is valid, because it is Javadoc.
 fn valid_no_space(char_before: char, char_after: char) -> bool {
     if char_with_spaces(char_before) || char_with_spaces(char_after) {
         return true;
