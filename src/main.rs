@@ -7,14 +7,17 @@ fn main() {
 
     let args: Vec<String> = env::args().collect();
 
-    if args.len() > 2 {
+    if args.len() > 1 {
         let path = &args[1];
         let content = read_file(path);
         let result: String = java_doc_generator::generate_javadoc(&content);
         let result2 = checkstyle_fixer::fix_checkstyle(result);    
         write_file(path, result2);
+        println!("Generating javadoc and fixing checkstyle errors done");
     }
-
+    else {
+        println!("No File path has been given.");
+    }
 
 }
 
