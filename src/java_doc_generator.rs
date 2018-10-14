@@ -55,3 +55,18 @@ fn get_param_name(line: &str) -> &str {
     splitted[1]
 
 }
+
+#[cfg(test)]
+mod tests {        
+    use super::*;
+
+    #[test]
+    fn test_field_name() {
+        assert_eq!(get_field_name("public int getScore() {"), "score");
+    }
+
+    #[test]
+    fn test_param_name() {
+        assert_eq!(get_param_name("public void setScore(int score) {"), "score");
+    }
+}

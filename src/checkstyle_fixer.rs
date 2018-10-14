@@ -97,11 +97,11 @@ mod tests {
 
     #[test]
     fn test_spaces_on_string_arithmetics() {
-        assert_eq!(fix_spaces(String::from("2* 3 +4-z/ 3")), String::from("2 * 3 + 4 - z / 3"));
+        assert_eq!(fix_spaces(String::from("2* 3 +4-z/ 3")), String::from("2 * 3 + 4 - z / 3\n"));
     }
 
     #[test]
     fn test_spaces_on_string_curly_braces() {
-        assert_eq!(fix_spaces(String::from("public int test_method(){  }")), String::from("public int test_method() {  }"))
+        assert_eq!(fix_spaces(String::from("public int test_method(){  }")), String::from("public int test_method() {  }\n"))
     }
 }
