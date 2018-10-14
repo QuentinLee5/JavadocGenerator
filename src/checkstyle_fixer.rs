@@ -5,38 +5,48 @@ pub fn fix_checkstyle(content: String) -> String {
 fn fix_spaces(content: String) -> String {
     let mut result = String::from("");
 
-    let chars:Vec<char> = content.chars().collect(); 
+    let lines = content.lines();
 
-    for (index, value) in chars.iter().enumerate() {
-       let char2 = {
-            if chars.len() > index + 1 {
-                chars[index + 1]
-            }
-            else {
-                ' '
-            }
-        };
-        if *value == ',' && char2 != ' ' {
-            result.push(*value);
-            result.push(' ');              
-        } 
-        
-        else if char_with_spaces(*value) && !valid_no_space(chars[index - 1], char2) {
-            if chars[index - 1] != ' ' {
-                result.push(' ');
-            }
-
-            result.push(*value);
-            
-            if chars.len() > index + 1 && chars[index + 1] != ' ' {
-                result.push(' ');
-            }
+    for line in lines {
+        if line_with_no_spaces(line) {
+            result.push_str(line);
         }
         else {
-            result.push(*value);
+            let chars:Vec<char> = line.chars().collect(); 
+
+            for (index, value) in chars.iter().enumerate() {
+                let char2 = {
+                    if chars.len() > index + 1 {
+                        chars[index + 1]
+                    }
+                    else {
+                        ' '
+                    }
+                };
+                if *value == ',' && char2 != ' ' {
+                    result.push(*value);
+                    result.push(' ');              
+                } 
+
+                else if char_with_spaces(*value) && !valid_no_space(chars[index - 1], char2) {
+                    if chars[index - 1] != ' ' {
+                        result.push(' ');
+                    }
+
+                    result.push(*value);
+
+                    if chars.len() > index + 1 && chars[index + 1] != ' ' {
+                        result.push(' ');
+                    }
+                }
+                else {
+                    result.push(*value);
+                }
+            } 
         }
+        result.push('\n');
     }
-    
+
     result
 }
 
@@ -45,6 +55,13 @@ fn char_with_spaces(input: char) -> bool {
         return true;
     }
     false
+}
+
+fn line_with_no_spaces(input: &str) -> bool {
+    if input.contains('/') || input.contains('-') || input.contains('+') || input.contains('*') || input.contains('}') || input.contains('{') {
+        return false;
+    }
+    true
 }
 
 fn valid_no_space(char_before: char, char_after: char) -> bool {
