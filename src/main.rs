@@ -1,6 +1,6 @@
 use std::env;
 mod java_doc_generator;
-mod checkstyle_fixer;
+mod checkstyle_fix_spaces;
 mod file_manager;
 mod command_line_adapter;
 
@@ -14,7 +14,7 @@ fn main() {
         let path = &args[1];
         let content = file_manager::read_file(path);
         let result: String = java_doc_generator::generate_javadoc(&content);
-        let result2 = checkstyle_fixer::fix_checkstyle(result);    
+        let result2 = checkstyle_fix_spaces::fix_spaces(result);    
         file_manager::write_file(path, result2);
         println!("Generating javadoc and fixing checkstyle errors done");
     }

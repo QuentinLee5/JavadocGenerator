@@ -1,10 +1,5 @@
-/// Fix the checkstye of all code given.
-pub fn fix_checkstyle(content: String) -> String {
-    fix_spaces(content)
-}
-
 /// Fix the checkstyle errors which are caused by missing spaces.
-fn fix_spaces(content: String) -> String {
+pub fn fix_spaces(content: String) -> String {
     let mut result = String::from("");
 
     let lines = content.lines();
