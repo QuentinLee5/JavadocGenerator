@@ -54,7 +54,7 @@ fn fix_spaces(content: String) -> String {
 
 /// Checks if the char is a char which must have a space as prefix and suffix.
 fn char_with_spaces(input: char) -> bool {
-    if input == '/' || input == '-' || input == '+' || input == '*' || input == '}' || input == '{' {
+    if input == '/' || input == '-' || input == '+' || input == '*' || input == '}' || input == '{' || input == '=' {
         return true;
     }
     false
@@ -62,7 +62,7 @@ fn char_with_spaces(input: char) -> bool {
 
 /// Checks if the line contains a char which must have a space as prefix and suffix.
 fn line_with_no_spaces(input: &str) -> bool {
-    if input.contains('/') || input.contains('-') || input.contains('+') || input.contains('*') || input.contains('}') || input.contains('{') {
+    if input.contains('/') || input.contains('-') || input.contains('+') || input.contains('*') || input.contains('}') || input.contains('{') || input.contains('=') {
         return false;
     }
     true
