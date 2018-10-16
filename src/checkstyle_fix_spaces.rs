@@ -20,13 +20,20 @@ pub fn fix_spaces(content: String) -> String {
                         ' '
                     }
                 };
+                let char3 = {
+                    if index > 0 {
+                        chars[index - 1]
+                    }
+                    else {
+                        ' '
+                    }
+                };
                 if *value == ',' && char2 != ' ' {
                     result.push(*value);
                     result.push(' ');              
                 } 
-
-                else if char_with_spaces(*value) && !valid_no_space(chars[index - 1], char2) {
-                    if chars[index - 1] != ' ' {
+                else if char_with_spaces(*value) &&  !valid_no_space(char3, char2) {
+                    if char3 != ' ' {
                         result.push(' ');
                     }
 
@@ -65,7 +72,7 @@ fn line_with_no_spaces(input: &str) -> bool {
 
 /// Checks if the missing space is valid, because it is Javadoc.
 fn valid_no_space(char_before: char, char_after: char) -> bool {
-    if char_with_spaces(char_before) || char_with_spaces(char_after) {
+    if char_with_spaces(char_before) || char_with_spaces(char_after) || char_after == '>'{
         return true;
     }
     false
