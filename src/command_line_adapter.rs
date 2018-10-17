@@ -22,45 +22,65 @@ pub fn maven_check_style(project_path: String) {
 
     let output_string = String::from_utf8_lossy(&output.stdout); 
 
+
     fix_checkstyle(&output_string.to_string());
 
     println!("Finished");
 }
 
+#[derive(Debug)]
+enum Errors {
+    UnusedImports(String, i32),
+    WhiteSpace(String, i32),
+    JavaDoc(String, i32),
+    Unknown,
+}
+
+impl Errors {
+    pub fn convert(err_str: &str) -> Self {
+        let file_path = get_file_path(err_str);
+        let actual_error = get_error_from_message(err_str);
+        let line_number = get_line_number(err_str);
+        match &actual_error[..] {
+            "UnusedImports" => Errors::UnusedImports(file_path, line_number),
+            "WhiteSpace" => Errors::WhiteSpace(file_path, line_number),
+            "Javadoc" => Errors::JavaDoc(file_path, line_number),
+            _ => Errors::Unknown
+        }
+    }
+}
+
 fn fix_checkstyle(output: &String) {
     let errors_string = find_error_lines(output.to_string());
 
+    let errors = errors_string
+        .into_iter()
+        .map(|i| Errors::convert(&i));
     let mut files_removed_lines: Vec<String> = Vec::new();
 
     let mut files_fix_spaces: Vec<String> = Vec::new();
 
     let mut files_fix_javadoc: Vec<String> = Vec::new();
 
-    for error in errors_string {
-
-        let file_path = get_file_path(&error);
-
-        let actual_error = get_error_from_message(&error);
-
-        let line_number = get_line_number(&error);
-
-        if actual_error == "UnusedImports" {
-            fix_unused_import(&file_path, line_number);
-            if !contains_file(&files_removed_lines, &file_path) {
-                files_removed_lines.push(String::from(&file_path[0..]));
-            }
-        }
-
-        if actual_error.contains("Whitespace") {
-            if !contains_file(&files_fix_spaces, &file_path) {
-                files_fix_spaces.push(String::from(&file_path[0..]));
-            }
-        }
-
-        if actual_error.contains("Javadoc") {
-            if !contains_file(&files_fix_javadoc, &file_path) {
-                files_fix_javadoc.push(String::from(&file_path[0..]));
-            }
+    for error in errors {
+        match error {
+            Errors::UnusedImports(file, line_number) => {
+                fix_unused_import(&file, line_number);
+                if !files_removed_lines.contains(&file) {
+                    files_removed_lines.push(file);
+                }
+            },
+            Errors::WhiteSpace(file, _line_number) => {
+                if !files_fix_spaces.contains(&file) {
+                    files_fix_spaces.push(file);
+                }
+            },
+            Errors::JavaDoc(file, _line_number) => {
+                if !files_fix_javadoc.contains(&file) {
+                    files_fix_javadoc.push(file)    
+                }
+            }, 
+            Errors::Unknown => {}
         }
     }
     
@@ -74,6 +94,7 @@ fn fix_checkstyle(output: &String) {
     fix_javadoc_all_files(&files_fix_javadoc);
 }
 
+
 fn fix_javadoc_all_files(files: &Vec<String>) {
     for file in files {
         file_manager::write_file(&file[0..], java_doc_generator::generate_javadoc(&file_manager::read_file(&file[0..])[0..]));
@@ -82,6 +103,7 @@ fn fix_javadoc_all_files(files: &Vec<String>) {
 
 fn fix_spaces_all_files(files: &Vec<String>) {
     for file in files {
+        println!("fix spaces file {}", &file);
         file_manager::write_file(&file[0..], checkstyle_fix_spaces::fix_spaces(file_manager::read_file(&file[0..])));
     }
 }
@@ -108,16 +130,6 @@ fn clean_file(content: String) -> String {
     result
 }
 
-fn contains_file(files: &Vec<String>, other: &String) -> bool {
-    for file in files {
-        if *file == *other {
-            return true;
-        }
-    }
-    false
-}
-
-
 fn find_error_lines(output: String) -> Vec<String> {
     let lines = output.lines();
 
@@ -142,22 +154,31 @@ fn find_error_lines(output: String) -> Vec<String> {
     return error_lines;
 }
 
-fn get_error_from_message(message: &String) -> String {
+fn get_error_from_message(message: &str) -> String {
     let actual_message = get_actual_message(message);
 
     let index = actual_message.find('[').unwrap() + 1;
 
-    actual_message[index..actual_message.len() - 1].to_string()
+    let temp = actual_message[index..actual_message.len() - 1].to_string();
+
+    if temp.contains("Javadoc") {
+        return String::from("Javadoc");
+    }
+    if temp.contains("Whitespace") {
+        return String::from("WhiteSpace");
+    }
+
+    temp
 }
 
 
-fn get_actual_message(message: &String) -> String {
+fn get_actual_message(message: &str) -> String {
     let index = message.find(']').unwrap() + 2;
 
     String::from(&message[index..])
 }
 
-fn get_file_path(message: &String) -> String {
+fn get_file_path(message: &str) -> String {
     let actual_message = get_actual_message(message);
 
     let index = actual_message.find(":").unwrap();
@@ -165,7 +186,7 @@ fn get_file_path(message: &String) -> String {
     String::from(&actual_message[..index])
 }
 
-fn get_line_number(message: &String) -> i32 {
+fn get_line_number(message: &str) -> i32 {
     let actual_message = get_actual_message(message);
 
     let index_1 = actual_message.find(':').unwrap() + 1;
