@@ -42,7 +42,7 @@ impl Errors {
         let actual_error = get_error_from_message(err_str);
         let line_number = get_line_number(err_str);
         match &actual_error[..] {
-            "UnusedImports" => Errors::UnusedImports(file_path, line_number),
+            "Imports" => Errors::UnusedImports(file_path, line_number),
             "WhiteSpace" => Errors::WhiteSpace(file_path, line_number),
             "Javadoc" => Errors::JavaDoc(file_path, line_number),
             _ => Errors::Unknown
@@ -166,6 +166,9 @@ fn get_error_from_message(message: &str) -> String {
     }
     if temp.contains("Whitespace") {
         return String::from("WhiteSpace");
+    }
+    if temp.contains("Import") {
+        return String::from("Imports");
     }
 
     temp
