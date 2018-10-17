@@ -18,9 +18,13 @@ pub fn maven_check_style(project_path: String) {
             .expect("failed to execute process")
     };
 
+    println!("Finished running checkstyle");
+
     let output_string = String::from_utf8_lossy(&output.stdout); 
 
     fix_checkstyle(&output_string.to_string());
+
+    println!("Finished");
 }
 
 fn fix_checkstyle(output: &String) {
@@ -59,11 +63,14 @@ fn fix_checkstyle(output: &String) {
             }
         }
     }
-
+    
+    println!("Removing all unused javadoc");
     clean_all_files(&files_removed_lines);
 
+    println!("Adding missing spaces");
     fix_spaces_all_files(&files_fix_spaces);
 
+    println!("Adding Javadoc to getters and setters");
     fix_javadoc_all_files(&files_fix_javadoc);
 }
 
