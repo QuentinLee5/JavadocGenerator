@@ -1,7 +1,8 @@
 use std::process::Command;
 use java_doc_generator;
+use checkstyle_fix_imports;
 use checkstyle_fix_spaces;
-use file_manager;
+
 pub fn maven_check_style(project_path: String) {
     println!("Running checkstyle...\n");
     let output = if cfg!(target_os = "windows") {
@@ -65,7 +66,7 @@ fn fix_checkstyle(output: &String) {
     for error in errors {
         match error {
             Errors::UnusedImports(file, line_number) => {
-                fix_unused_import(&file, line_number);
+                checkstyle_fix_imports::fix_unused_import(&file, line_number);
                 if !files_removed_lines.contains(&file) {
                     files_removed_lines.push(file);
                 }
@@ -85,49 +86,13 @@ fn fix_checkstyle(output: &String) {
     }
     
     println!("Removing all unused javadoc");
-    clean_all_files(&files_removed_lines);
+    checkstyle_fix_imports::fix_all_files(&files_removed_lines);
 
     println!("Adding missing spaces");
-    fix_spaces_all_files(&files_fix_spaces);
+    checkstyle_fix_spaces::fix_spaces_all_files(&files_fix_spaces);
 
     println!("Adding Javadoc to getters and setters");
-    fix_javadoc_all_files(&files_fix_javadoc);
-}
-
-
-fn fix_javadoc_all_files(files: &Vec<String>) {
-    for file in files {
-        file_manager::write_file(&file[0..], java_doc_generator::generate_javadoc(&file_manager::read_file(&file[0..])[0..]));
-    }
-}
-
-fn fix_spaces_all_files(files: &Vec<String>) {
-    for file in files {
-        println!("fix spaces file {}", &file);
-        file_manager::write_file(&file[0..], checkstyle_fix_spaces::fix_spaces(file_manager::read_file(&file[0..])));
-    }
-}
-
-fn clean_all_files(files: &Vec<String>) {
-    for file in files {
-        let content = file_manager::read_file(&file[0..]);
-        file_manager::write_file(&file[0..], clean_file(content));
-        println!("Fix spaces of file {}", file);
-    }
-}
-
-fn clean_file(content: String) -> String {
-    let lines = content.lines();
-
-    let mut result = String::from("");
-
-    for line in lines {
-        if !line.contains("||delete||") {
-            result.push_str(line);
-            result.push('\n');
-        }
-    }
-    result
+    java_doc_generator::fix_javadoc_all_files(&files_fix_javadoc);
 }
 
 fn find_error_lines(output: String) -> Vec<String> {
@@ -200,29 +165,4 @@ fn get_line_number(message: &str) -> i32 {
 
     let result = String::from(&temp[..index_2]);
     result.parse::<i32>().unwrap()
-}
-
-fn fix_unused_import(file: &String, line_number: i32) {
-    let content = file_manager::read_file(&file[0..]); 
-
-    let lines = content.lines();
-
-    let mut result = String::from("");
-
-    let mut line_count = 1;
-
-    for line in lines {
-        if line_count != line_number {
-            result.push_str(line);
-            result.push('\n');
-        }
-        else {
-            result.push_str("||delete||\n");
-        }
-        line_count += 1;
-    }
-
-    file_manager::write_file(&file[0..], result);
-
-    println!("Fixed unused import of file {} at line {}", file, line_number);
 }

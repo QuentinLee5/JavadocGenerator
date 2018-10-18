@@ -1,5 +1,13 @@
+use file_manager;
+
+pub fn fix_javadoc_all_files(files: &Vec<String>) {
+    for file in files {
+        file_manager::write_file(&file[0..], generate_javadoc(&file_manager::read_file(&file[0..])[0..]));
+    }
+}
+
 /// Generates Javadoc for the given code.
-pub fn generate_javadoc(code: &str) -> String {
+fn generate_javadoc(code: &str) -> String {
     
     let lines = code.lines();
     
