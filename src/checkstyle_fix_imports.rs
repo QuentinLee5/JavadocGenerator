@@ -57,4 +57,11 @@ mod tests {
        let res = String::from("line 1 \nline 3\n");
        assert_eq!(clean_file(String::from(input)), res);
     }
+
+    #[test]
+    fn test_fix_dont_delete_line() {
+        let input = String::from("test\nline");
+        let res = String::from("test\nline\n");
+        assert_eq!(clean_file(input), res);
+    }
 }

@@ -166,3 +166,32 @@ fn get_line_number(message: &str) -> i32 {
     let result = String::from(&temp[..index_2]);
     result.parse::<i32>().unwrap()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_file_path() {
+        let message = "[WARN] /src/main/java/grade/ProjectGrade.java:30:40: '%' is not followed by whitespace. [WhitespaceAround]";
+        assert_eq!(get_file_path(message), String::from("/src/main/java/grade/ProjectGrade.java"));
+    }
+
+    #[test]
+    fn test_get_line_number() {
+       let message = "[WARN] /src/main/java/grade/ProjectGrade.java:30:40: '%' is not followed by whitespace. [WhitespaceAround]"; 
+       assert_eq!(get_line_number(message), 30);
+    } 
+
+    #[test]
+    fn test_get_error() {
+        let message = "[WARN] /src/main/java/grade/ProjectGrade.java:30:40: '%' is not followed by whitespace. [WhitespaceAround]"; 
+        assert_eq!(get_error_from_message(message), String::from("WhiteSpace"));
+    }
+
+    #[test]
+    fn test_get_error_lines() {
+        let input = String::from("test\ntest\nStarting audit\ntest\ntest\ntest\nAudit done.");
+        assert_eq!(find_error_lines(input).len(), 3);
+    }
+}
