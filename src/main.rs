@@ -3,6 +3,7 @@ mod java_doc_generator;
 mod checkstyle_fix_spaces;
 mod file_manager;
 mod command_line_adapter;
+mod checkstyle_fix_imports;
 
 fn main() {
     

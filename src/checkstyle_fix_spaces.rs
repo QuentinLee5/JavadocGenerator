@@ -1,5 +1,14 @@
+use file_manager;
+
+pub fn fix_spaces_all_files(files: &Vec<String>) {
+    for file in files {
+        println!("fix spaces file {}", &file);
+        file_manager::write_file(&file[0..], fix_spaces(file_manager::read_file(&file[0..])));
+    }
+}
+
 /// Fix the checkstyle errors which are caused by missing spaces.
-pub fn fix_spaces(content: String) -> String {
+fn fix_spaces(content: String) -> String {
     let mut result = String::from("");
 
     let lines = content.lines();
