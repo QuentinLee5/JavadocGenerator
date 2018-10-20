@@ -4,6 +4,7 @@ mod checkstyle_fix_spaces;
 mod file_manager;
 mod command_line_adapter;
 mod checkstyle_fix_imports;
+mod fix_modifier_order;
 
 fn main() {
     
