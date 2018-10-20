@@ -1,7 +1,9 @@
+use std::time::SystemTime;
 use std::process::Command;
 use java_doc_generator;
 use checkstyle_fix_imports;
 use checkstyle_fix_spaces;
+use fix_modifier_order;
 
 pub fn maven_check_style(project_path: String) {
     println!("Running checkstyle...\n");
@@ -34,6 +36,7 @@ enum Errors {
     UnusedImports(String, i32),
     WhiteSpace(String, i32),
     JavaDoc(String, i32),
+    ModifierOrder(String, i32),
     Unknown,
 }
 
@@ -46,6 +49,7 @@ impl Errors {
             "Imports" => Errors::UnusedImports(file_path, line_number),
             "WhiteSpace" => Errors::WhiteSpace(file_path, line_number),
             "Javadoc" => Errors::JavaDoc(file_path, line_number),
+            "ModifierOrder" => Errors::ModifierOrder(file_path, line_number),
             _ => Errors::Unknown
         }
     }
@@ -81,18 +85,27 @@ fn fix_checkstyle(output: &String) {
                     files_fix_javadoc.push(file)    
                 }
             }, 
+            Errors::ModifierOrder(file, line_number) => {
+                fix_modifier_order::fix_modifier_error(file, line_number);
+            }
             Errors::Unknown => {}
         }
     }
-    
-    println!("Removing all unused javadoc");
+    let now = SystemTime::now();
+
     checkstyle_fix_imports::fix_all_files(&files_removed_lines);
 
-    println!("Adding missing spaces");
     checkstyle_fix_spaces::fix_spaces_all_files(&files_fix_spaces);
 
-    println!("Adding Javadoc to getters and setters");
     java_doc_generator::fix_javadoc_all_files(&files_fix_javadoc);
+    
+    match now.elapsed() {
+       Ok(elapsed) => {
+           println!("Done in {} seconds!", elapsed.as_secs());
+       }
+       Err(_e) => {
+       }
+   }
 }
 
 fn find_error_lines(output: String) -> Vec<String> {
@@ -126,9 +139,6 @@ fn get_error_from_message(message: &str) -> String {
 
     let temp = actual_message[index..actual_message.len() - 1].to_string();
 
-    if temp.contains("Javadoc") {
-        return String::from("Javadoc");
-    }
     if temp.contains("Whitespace") {
         return String::from("WhiteSpace");
     }

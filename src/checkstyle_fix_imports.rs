@@ -4,7 +4,6 @@ pub fn fix_all_files(files: &Vec<String>) {
     for file in files {
         let content = file_manager::read_file(&file[0..]);
         file_manager::write_file(&file[0..], clean_file(content));
-        println!("Fix spaces of file {}", file);
     }
 }
 
