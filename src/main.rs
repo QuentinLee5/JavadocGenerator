@@ -1,3 +1,4 @@
+extern crate regex;
 use std::env;
 mod java_doc_generator;
 mod checkstyle_fix_spaces;
