@@ -35,4 +35,9 @@ mod tests {
     fn test_javadoc_no_spaces_inserted() {
         assert_eq!(fix_spaces(String::from("/**\n*\n*\n*/")), String::from("/**\n*\n*\n*/"));
     }
+
+    #[test]
+    fn test_lambda() {
+        assert_eq!(fix_spaces(String::from("x->{  }")), String::from("x -> {  }"))
+    }
 }
