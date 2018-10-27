@@ -11,7 +11,7 @@ pub fn fix_spaces_all_files(files: &Vec<String>) {
 fn fix_spaces(content: String) -> String {
     let re_before = Regex::new(r"(?P<before>[^/\-+*}{=\s])(?P<c>[/\-+*}{=])").unwrap();
     let temp = re_before.replace_all(&content[..], "$before $c");
-    let re_after = Regex::new(r"(?P<c>[/\-+*}{=])(?P<after>[^/\-+*}{=\s>])").unwrap();
+    let re_after = Regex::new(r"(?P<c>[/\-+*},{=])(?P<after>[^/\-+*}{=\s>])").unwrap();
     let temp_content = String::from(temp);
     let result = re_after.replace_all(&temp_content[..], "$c $after"); 
     result.to_string()
@@ -28,7 +28,7 @@ mod tests {
 
     #[test]
     fn test_spaces_on_string_curly_braces() {
-        assert_eq!(fix_spaces(String::from("public int test_method(){  }")), String::from("public int test_method() {  }"))
+        assert_eq!(fix_spaces(String::from("public int test_method(int x,int y){  }")), String::from("public int test_method(int x, int y) {  }"))
     }
 
     #[test]
