@@ -32,6 +32,11 @@ mod tests {
     }
 
     #[test]
+    fn test_no_spaces_added_equals() {
+        assert_eq!(fix_spaces(String::from("==")), String::from("=="));
+    }
+
+    #[test]
     fn test_no_space_added_plusses() {
         assert_eq!(fix_spaces(String::from("++")), String::from("++"));
     }
