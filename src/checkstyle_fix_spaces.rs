@@ -32,6 +32,11 @@ mod tests {
     }
 
     #[test]
+    fn test_no_space_added_plusses() {
+        assert_eq!(fix_spaces(String::from("++")), String::from("++"));
+    }
+
+    #[test]
     fn test_javadoc_no_spaces_inserted() {
         assert_eq!(fix_spaces(String::from("/**\n*\n*\n*/")), String::from("/**\n*\n*\n*/"));
     }
