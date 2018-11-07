@@ -4,5 +4,20 @@
 
 [![codecov](https://codecov.io/gh/QuentinLee5/fix-my-static-analysis-Java/branch/master/graph/badge.svg)](https://codecov.io/gh/QuentinLee5/fix-my-static-analysis-Java)
 
+This tool provides support for fixing checkstyle errors on your maven java project. 
 
-Run this Rust program in your terminal and add the path of the java file as program argument. This will add javadoc to all getters and setters of your file and add spaces to all places where checkstyle is complaining that there is no space. 
+## Functionality
+- Removing unused imports.
+- Adding spaces before or after characters where these are desirable.
+- Add standard javadoc to getters and setters.
+- Put modifiers in the right order.
+
+## Requirements
+- Your project should be using maven.
+- The maven checkstyle plug-in should be installed.
+- You should have provided your own checkstyle.xml
+- Rust should be installed on your computer.
+
+## Using the tool
+To use this tool, open the terminal. Next run the Rust program using the file path of the maven project as argument.
+When finished, the tool should have fixed the above mentioned checkstyle errors.
