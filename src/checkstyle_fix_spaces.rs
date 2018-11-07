@@ -9,10 +9,10 @@ pub fn fix_spaces_all_files(files: &Vec<String>) {
 
 /// Fix the checkstyle errors which are caused by missing spaces.
 fn fix_spaces(content: String) -> String {
-    let re_before = Regex::new(r"(?P<before>[^/\-+*}{=\s])(?P<c>[/\-+*}{=])").unwrap();
-    let temp = re_before.replace_all(&content[..], "$before $c");
-    let re_after = Regex::new(r"(?P<c>[/\-+*}{=])(?P<after>[^/\-+*}{=\s>])").unwrap();
-    let temp_content = String::from(temp);
+    let re_before = Regex::new(r"(?P<before>[^!/\-+*}{=\s])(?P<c>[/\-+*}{=])").unwrap();
+    let temp_res = re_before.replace_all(&content[..], "$before $c");
+    let re_after = Regex::new(r"(?P<c>[/\-+*},{=])(?P<after>[^!/\-+*}{=\s>])").unwrap();
+    let temp_content = String::from(temp_res);
     let result = re_after.replace_all(&temp_content[..], "$c $after"); 
     result.to_string()
 }
@@ -28,7 +28,17 @@ mod tests {
 
     #[test]
     fn test_spaces_on_string_curly_braces() {
-        assert_eq!(fix_spaces(String::from("public int test_method(){  }")), String::from("public int test_method() {  }"))
+        assert_eq!(fix_spaces(String::from("public int test_method(int x,int y){  }")), String::from("public int test_method(int x, int y) {  }"))
+    }
+
+    #[test]
+    fn test_no_spaces_added_equals() {
+        assert_eq!(fix_spaces(String::from("==")), String::from("=="));
+    }
+
+    #[test]
+    fn test_no_space_added_plusses() {
+        assert_eq!(fix_spaces(String::from("++")), String::from("++"));
     }
 
     #[test]
@@ -38,6 +48,11 @@ mod tests {
 
     #[test]
     fn test_lambda() {
-        assert_eq!(fix_spaces(String::from("x->{  }")), String::from("x -> {  }"))
+        assert_eq!(fix_spaces(String::from("x->{  }")), String::from("x -> {  }"));
+    }
+
+    #[test]
+    fn test_not_equals_operator() {
+        assert_eq!(fix_spaces(String::from("!=")), String::from("!=")); 
     }
 }
